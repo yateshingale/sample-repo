@@ -17,37 +17,37 @@ pipeline {
         }
     }
 
-   post {
-    success {
-        emailext(
-            subject: "SUCCESS: Job '${env.JOB_NAME} [#${env.BUILD_NUMBER}]'",
-            body: """
-                Good news!
+    post {
+        success {
+            emailext(
+                subject: "SUCCESS: Job '${env.JOB_NAME} [#${env.BUILD_NUMBER}]'",
+                body: """
+                    Good news!
 
-                Job: ${env.JOB_NAME}
-                Build: #${env.BUILD_NUMBER}
-                URL: ${env.BUILD_URL}
+                    Job: ${env.JOB_NAME}
+                    Build: #${env.BUILD_NUMBER}
+                    URL: ${env.BUILD_URL}
 
-                The build was successful!
-            """,
-            to: 'yateshingale03@gmail.com'
-        )
-    }
+                    The build was successful!
+                """,
+                to: 'yateshingale03@gmail.com'
+            )
+        }
 
-    failure {
-        emailext(
-            subject: "FAILURE: Job '${env.JOB_NAME} [#${env.BUILD_NUMBER}]'",
-            body: """
-                Oh no!
+        failure {
+            emailext(
+                subject: "FAILURE: Job '${env.JOB_NAME} [#${env.BUILD_NUMBER}]'",
+                body: """
+                    Oh no!
 
-                Job: ${env.JOB_NAME}
-                Build: #${env.BUILD_NUMBER}
-                URL: ${env.BUILD_URL}
+                    Job: ${env.JOB_NAME}
+                    Build: #${env.BUILD_NUMBER}
+                    URL: ${env.BUILD_URL}
 
-                The build failed.
-            """,
-            to: 'yateshingale03@gmail.com'
-        )
+                    The build failed.
+                """,
+                to: 'yateshingale03@gmail.com'
+            )
+        }
     }
 }
-
