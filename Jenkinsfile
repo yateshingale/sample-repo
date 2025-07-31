@@ -17,21 +17,37 @@ pipeline {
         }
     }
 
-    post {
-        success {
-            emailext(
-                subject: 'SUCCESS: Job ${env.JOB_NAME} Build #${env.BUILD_NUMBER}',
-                body: 'Good news! The build was successful.\n\nCheck it here: ${env.BUILD_URL}',
-                to: 'yateshingale03@gmail.com'
-            )
-        }
+   post {
+    success {
+        emailext(
+            subject: "SUCCESS: Job '${env.JOB_NAME} [#${env.BUILD_NUMBER}]'",
+            body: """
+                Good news!
 
-        failure {
-            emailext(
-                subject: 'FAILURE: Job ${env.JOB_NAME} Build #${env.BUILD_NUMBER}',
-                body: 'Oops! The build failed.\n\nCheck it here: ${env.BUILD_URL}',
-                to: 'yateshingale03@gmail.com'
-            )
-        }
+                Job: ${env.JOB_NAME}
+                Build: #${env.BUILD_NUMBER}
+                URL: ${env.BUILD_URL}
+
+                The build was successful!
+            """,
+            to: 'yateshingale03@gmail.com'
+        )
+    }
+
+    failure {
+        emailext(
+            subject: "FAILURE: Job '${env.JOB_NAME} [#${env.BUILD_NUMBER}]'",
+            body: """
+                Oh no!
+
+                Job: ${env.JOB_NAME}
+                Build: #${env.BUILD_NUMBER}
+                URL: ${env.BUILD_URL}
+
+                The build failed.
+            """,
+            to: 'yateshingale03@gmail.com'
+        )
     }
 }
+
