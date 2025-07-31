@@ -1,18 +1,22 @@
 pipeline {
     agent any
 
+    environment {
+        RECIPIENT = 'yateshingale03@gmail.com'
+    }
+
     stages {
         stage('Build') {
             steps {
                 echo 'Building...'
-                // your build logic here
+                // Add build logic
             }
         }
 
         stage('Test') {
             steps {
                 echo 'Testing...'
-                // your test logic here
+                // Add test logic
             }
         }
     }
@@ -21,32 +25,26 @@ pipeline {
         success {
             emailext(
                 subject: "SUCCESS: Job '${env.JOB_NAME} [#${env.BUILD_NUMBER}]'",
-                body: """
-                    Good news!
-
-                    Job: ${env.JOB_NAME}
-                    Build: #${env.BUILD_NUMBER}
-                    URL: ${env.BUILD_URL}
-
-                    The build was successful!
-                """,
-                to: 'yateshingale03@gmail.com'
+                body: """<p><b>Good news!</b></p>
+                         <p>Job: ${env.JOB_NAME}<br/>
+                         Build: #${env.BUILD_NUMBER}<br/>
+                         URL: <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
+                         <p>The build was successful!</p>""",
+                mimeType: 'text/html',
+                to: "${env.RECIPIENT}"
             )
         }
 
         failure {
             emailext(
                 subject: "FAILURE: Job '${env.JOB_NAME} [#${env.BUILD_NUMBER}]'",
-                body: """
-                    Oh no!
-
-                    Job: ${env.JOB_NAME}
-                    Build: #${env.BUILD_NUMBER}
-                    URL: ${env.BUILD_URL}
-
-                    The build failed.
-                """,
-                to: 'yateshingale03@gmail.com'
+                body: """<p><b>Build Failed!</b></p>
+                         <p>Job: ${env.JOB_NAME}<br/>
+                         Build: #${env.BUILD_NUMBER}<br/>
+                         URL: <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
+                         <p>Please check the console output for details.</p>""",
+                mimeType: 'text/html',
+                to: "${env.RECIPIENT}"
             )
         }
     }
