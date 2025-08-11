@@ -10,26 +10,32 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: "${BRANCH}", url: 'https://github.com/yateshingale/sample-repo'
+                // Clone your repo
+                git url: 'https://github.com/yateshingale/sample-repo', branch: "${params.BRANCH}"
+                
+                // OR if repo already cloned, just checkout
+                sh "git checkout ${params.BRANCH}"
             }
         }
 
         stage('Info') {
             steps {
-                echo "Building branch: ${BRANCH}"
-                echo "Deploying to: ${ENV}"
-                echo "Run Tests: ${RUN_TESTS}"
+                echo "Building branch: ${params.BRANCH}"
+                echo "Deploying to: ${params.ENV}"
+                echo "Run Tests: ${params.RUN_TESTS}"
             }
         }
 
         stage('Test') {
-            when {
-                expression { return RUN_TESTS }
-            }
             steps {
-                sh 'echo "Running tests..."'
-                sh 'ls -al'
-                // Add your actual test command here
+                script {
+                    if (params.RUN_TESTS) {
+                        echo "Running tests..."
+                        sh "echo 'Running test commands here'"
+                    } else {
+                        echo "Skipping tests..."
+                    }
+                }
             }
         }
     }
