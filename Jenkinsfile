@@ -1,51 +1,37 @@
 pipeline {
     agent any
 
-    environment {
-        RECIPIENT = 'yateshingale03@gmail.com'
+    parameters {
+        string(name: 'BRANCH', defaultValue: 'master', description: 'Git branch to build')
+        choice(name: 'ENV', choices: ['dev', 'qa', 'prod'], description: 'Deployment environment')
+        booleanParam(name: 'RUN_TESTS', defaultValue: true, description: 'Run test cases?')
     }
 
     stages {
-        stage('Build') {
+        stage('Checkout') {
             steps {
-                echo 'Building...'
-                // Add build logic
+                git branch: "${BRANCH}", url: 'https://github.com/yateshingale/sample-repo'
+            }
+        }
+
+        stage('Info') {
+            steps {
+                echo "Building branch: ${BRANCH}"
+                echo "Deploying to: ${ENV}"
+                echo "Run Tests: ${RUN_TESTS}"
             }
         }
 
         stage('Test') {
+            when {
+                expression { return RUN_TESTS }
+            }
             steps {
-                echo 'Testing...'
-                // Add test logic
+                sh 'echo "Running tests..."'
+                sh 'ls -al'
+                // Add your actual test command here
             }
         }
     }
-
-    post {
-        success {
-            emailext(
-                subject: "SUCCESS: Job '${env.JOB_NAME} [#${env.BUILD_NUMBER}]'",
-                body: """<p><b>Good news!</b></p>
-                         <p>Job: ${env.JOB_NAME}<br/>
-                         Build: #${env.BUILD_NUMBER}<br/>
-                         URL: <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
-                         <p>The build was successful!</p>""",
-                mimeType: 'text/html',
-                to: "${env.RECIPIENT}"
-            )
-        }
-
-        failure {
-            emailext(
-                subject: "FAILURE: Job '${env.JOB_NAME} [#${env.BUILD_NUMBER}]'",
-                body: """<p><b>Build Failed!</b></p>
-                         <p>Job: ${env.JOB_NAME}<br/>
-                         Build: #${env.BUILD_NUMBER}<br/>
-                         URL: <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
-                         <p>Please check the console output for details.</p>""",
-                mimeType: 'text/html',
-                to: "${env.RECIPIENT}"
-            )
-        }
-    }
 }
++
